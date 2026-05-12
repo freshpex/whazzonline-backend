@@ -1,0 +1,2 @@
+-- Initial schema placeholder.
+-- Add users, products, carts, cart_items, orders, and reviews tables here when persistence is introduced.

@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+branch="$(git rev-parse --abbrev-ref HEAD)"
+
+if [ "$branch" = "main" ] || [ "$branch" = "dev" ]; then
+  echo "Direct push to $branch is blocked. Create your branch from dev and open a pull request."
+  exit 1
+fi
+
+npm run branch:check && npm run check
