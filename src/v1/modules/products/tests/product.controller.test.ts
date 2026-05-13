@@ -15,17 +15,29 @@ const sampleProduct = {
 };
 
 describe('productController', () => {
-  it('returns filtered products in listProducts', async () => {
-    const req = { query: { q: 'watch' } } as unknown as Request;
+  it('returns paginated products in listProducts', async () => {
+    const req = { query: { q: 'watch', page: '1', limit: '9' } } as unknown as Request;
     const res = { json: vi.fn() } as unknown as Response;
     const next = vi.fn();
-    vi.spyOn(productService, 'list').mockResolvedValue([sampleProduct]);
+    vi.spyOn(productService, 'list').mockResolvedValue({
+      items: [sampleProduct],
+      page: 1,
+      limit: 9,
+      total: 1,
+      totalPages: 1
+    });
 
     await listProducts(req, res, next as unknown as NextFunction);
 
     expect(res.json).toHaveBeenCalledWith({
       success: true,
-      data: [sampleProduct]
+      data: {
+        items: [sampleProduct],
+        page: 1,
+        limit: 9,
+        total: 1,
+        totalPages: 1
+      }
     });
     expect(next).not.toHaveBeenCalled();
   });

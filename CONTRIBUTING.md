@@ -1,31 +1,69 @@
-# Contribution Guide
+# Backend Contribution Guide
+
+## Branching Convention
+
+Create branches from `dev`:
+
+```txt
+users/<name>/<feature|bugfix|hotfix|chore|docs|refactor|test>/<description>
+```
+
+Example:
+
+```txt
+users/enoch/feature/reviews-and-checkout-endpoints
+```
 
 ## Workflow
 
-1. Pull the latest `dev` branch.
-2. Create your branch from `dev`.
-3. Use the branch format: `users/<name>/<type>/<description>`.
-4. Make small commits with clear messages.
-5. Run `npm run check` before pushing.
-6. Open a pull request into `dev`.
+1. Pull latest `dev`.
+2. Create your branch.
+3. Implement in small, reviewable commits.
+4. Run quality checks locally.
+5. Open PR into `dev` with context and evidence.
 
-## Commit Standard
+## Commit Style
 
-Use clear conventional-style commits:
+Use conventional-style commits:
 
-- `feat: add product listing endpoint`
-- `fix: handle missing product id`
-- `chore: update CI workflow`
-- `docs: improve setup guide`
+- `feat: add checkout simulation endpoint`
+- `fix: validate product list pagination query`
+- `test: update product controller pagination assertions`
+- `docs: refresh backend architecture and setup`
 
-## Pull Request Rules
+## PR Requirements
 
-A PR must include:
+Every PR should include:
 
-- What changed
-- Why it changed
-- Screenshots or API samples where useful
-- Test evidence
-- Known limitations
+- Scope summary and rationale
+- API contract impact (if any)
+- Test evidence (`npm run test`, `npm run build`)
+- Migration/env changes if applicable
+- Risk notes and fallback/rollback considerations
 
-No PR will be merged if linting, type checking, tests, or build fails.
+## Must-Pass Checks
+
+```bash
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+```
+
+## Backend Standards
+
+- Validate all external input with Zod
+- Keep route/controller/service/repository separation
+- Return consistent API response envelope (`{ success, data }` or error message)
+- Enforce role and auth checks at route/middleware boundaries
+- Keep DB mutations atomic for transactional flows (checkout/order writes)
+
+## Review Focus Areas
+
+Reviewers should prioritize:
+
+- Data integrity and transaction safety
+- Auth/authorization correctness
+- Backward compatibility and endpoint consistency
+- Failure mode clarity (error messages/status codes)
+- Test coverage for new behavior

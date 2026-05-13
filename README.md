@@ -1,65 +1,77 @@
 # Whazzonline Backend
 
-Node.js + Express.js + TypeScript API for the Whazzonline mini e-commerce assessment.
+Node.js + Express + TypeScript REST API powering Whazzonline commerce flows.
 
-## Architecture
+## Overview
 
-```txt
-src/
-  shared/
-    auth/
-    config/
-    db/
-    errors/
-    middleware/
-    utils/
-  v1/
-    modules/
-      admin/
-      auth/
-      cart/
-      health/
-      me/
-      products/
-      users/
-        controllers/
-        routes/
-        services/
-        tests/
-        validators/
-```
+This backend currently supports:
+
+- Authentication (signup/login/me)
+- Admin-protected user creation
+- Product listing with search, category filter, pagination
+- Product details retrieval
+- Vendor/Admin product creation
+- Product reviews (list + upsert by authenticated user)
+- Payment simulation checkout with order creation and stock deduction
+- Swagger/OpenAPI docs endpoint
+
+## Tech Stack
+
+- Node.js
+- Express
+- TypeScript
+- PostgreSQL (`pg`)
+- JWT auth
+- Zod validation
+- Vitest
+
+## API Base URL
+
+- Local: `http://localhost:4000/api/v1`
+
+## Key Endpoints
+
+- `POST /auth/signup`
+- `POST /auth/login`
+- `GET /auth/me`
+- `POST /auth/users` (admin only)
+- `GET /products?q=&category=&page=&limit=`
+- `GET /products/categories`
+- `GET /products/:id`
+- `POST /products` (admin/vendor)
+- `GET /products/:id/reviews`
+- `POST /products/:id/reviews` (auth)
+- `POST /orders/checkout` (auth)
+- `GET /health`
+- `GET /docs`
+- `GET /docs/openapi.json`
 
 ## Local Setup
 
 ```bash
-cp .env.example .env
 npm install
+cp .env.example .env
 npm run dev
 ```
 
-## Seed Data
+## Environment Variables
 
-Run:
+- `NODE_ENV` (`development|test|production`)
+- `PORT` (default `4000`)
+- `CLIENT_ORIGIN` (frontend origin(s), comma-separated)
+- `JWT_SECRET` (minimum 24 chars)
+- `JWT_EXPIRES_IN` (default `7d`)
+- `DATABASE_URL` (PostgreSQL connection string)
+
+## Seed Data
 
 ```bash
 npm run seed
 ```
 
-This seeds users, products, reviews, sample cart items, and a sample order.
-Default seeded credentials:
+Creates sample users, products, reviews, and sample order/cart records.
 
-- `admin@whazzonline.com / Password123!`
-- `vendor@whazzonline.com / Password123!`
-- `customer@whazzonline.com / Password123!`
-
-## Swagger Docs
-
-When the API is running, open:
-
-- `/api/v1/docs`
-- `/api/v1/docs/openapi.json`
-
-## Required Checks
+## Quality Checks
 
 ```bash
 npm run lint
@@ -68,34 +80,28 @@ npm run test
 npm run build
 ```
 
-## Branching Standard
-
-Create branches from `dev` only:
-
-```txt
-users/<name>/<feature|bugfix|hotfix|chore|docs|refactor|test>/<description>
-```
-
-Example:
-
-```txt
-users/enoch/feature/product-listing-api
-```
-
-Direct push to `main` and `dev` is blocked by Husky locally. GitHub branch protection should also require pull requests and passing CI before merge.
-
 ## Deployment
 
-Recommended backend deployment: Render.
+Recommended: Render (or Railway)
 
-Set these environment variables on Render:
+Required runtime env vars:
 
 - `NODE_ENV=production`
 - `PORT`
 - `CLIENT_ORIGIN`
 - `JWT_SECRET`
+- `JWT_EXPIRES_IN`
 - `DATABASE_URL`
 
 ## Known Limitations
 
-We currently use in-memory product data. Will replace with PostgreSQL when persistence is required.
+- Checkout is a simulation flow (no external processor/webhook integration)
+- No order history/read APIs yet for customer/vendor dashboards
+- No background job system for async workflows (emails, retries, reconciliation)
+
+## Next Improvements
+
+- Add order history, invoice endpoints, and vendor fulfillment views
+- Introduce refresh-token/session rotation model
+- Add integration tests for checkout transaction behavior
+- Add observability (structured logs, tracing, metrics)
