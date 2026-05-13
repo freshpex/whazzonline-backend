@@ -37,6 +37,28 @@ npm install
 npm run dev
 ```
 
+## Seed Data
+
+Run:
+
+```bash
+npm run seed
+```
+
+This seeds users, products, reviews, sample cart items, and a sample order.
+Default seeded credentials:
+
+- `admin@whazzonline.com / Password123!`
+- `vendor@whazzonline.com / Password123!`
+- `customer@whazzonline.com / Password123!`
+
+## Swagger Docs
+
+When the API is running, open:
+
+- `/api/v1/docs`
+- `/api/v1/docs/openapi.json`
+
 ## Required Checks
 
 ```bash
@@ -76,4 +98,4 @@ Set these environment variables on Render:
 
 ## Known Limitations
 
-We currently use in-memory product data. Will replace with PostgreSQL or Supabase-backed repositories when persistence is required.
+We currently use in-memory product data. Will replace with PostgreSQL when persistence is required.
