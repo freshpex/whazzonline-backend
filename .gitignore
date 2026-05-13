@@ -1,0 +1,46 @@
+node_modules/
+.env
+dist/
+logs/
+coverage/
+*.log
+.DS_Store
+# Ignore IDE specific files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+# Ignore OS generated files
+Thumbs.db
+Desktop.ini
+# Ignore build artifacts
+build/
+# Ignore test files
+*.spec.js
+# Ignore temporary files
+*.tmp
+*.temp
+# Ignore package-lock.json if you prefer using yarn
+package-lock.json
+# Ignore yarn.lock if you prefer using npm
+yarn.lock
+# Ignore Docker files
+Dockerfile
+docker-compose.yml
+# Ignore coverage reports
+coverage/
+# Ignore environment variable files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+# Ignore log fileslogs/
+*.log
+# Ignore compiled JavaScript files if using TypeScript
+*.tsbuildinfo
+# Ignore IDE specific files
+.vscode/
+.idea/
