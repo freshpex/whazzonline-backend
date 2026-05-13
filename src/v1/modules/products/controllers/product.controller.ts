@@ -9,7 +9,10 @@ export const listProducts: RequestHandler = (req, res) => {
 };
 
 export const getProduct: RequestHandler = (req, res, next) => {
-  const product = productService.findById(req.params.id);
+  const id = req.params.id;
+  if (!id) return next(new HttpError(404, 'Product not found'));
+
+  const product = productService.findById(id);
   if (!product) return next(new HttpError(404, 'Product not found'));
   res.json({ success: true, data: product });
 };
