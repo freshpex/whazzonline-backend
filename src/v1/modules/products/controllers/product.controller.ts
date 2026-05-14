@@ -1,13 +1,16 @@
 import type { RequestHandler } from 'express';
 import { HttpError } from '../../../../shared/errors/http-error.js';
 import { productService } from '../services/product.service.js';
-import { createProductSchema } from '../validators/product.validator.js';
+import { createProductSchema, createReviewSchema, listProductsQuerySchema } from '../validators/product.validator.js';
 
 export const listProducts: RequestHandler = async (req, res, next) => {
   try {
-    const query = typeof req.query.q === 'string' ? req.query.q : undefined;
-    const category = typeof req.query.category === 'string' ? req.query.category : undefined;
-    const products = await productService.list(query, category);
+    const parsed = listProductsQuerySchema.safeParse(req.query);
+    if (!parsed.success) {
+      return next(new HttpError(400, parsed.error.errors[0]?.message ?? 'Please check your product filters and try again.'));
+    }
+
+    const products = await productService.list(parsed.data);
     res.json({ success: true, data: products });
   } catch (error) {
     next(error);
@@ -36,6 +39,48 @@ export const createProduct: RequestHandler = async (req, res, next) => {
 
     const product = await productService.create(parsed.data);
     res.status(201).json({ success: true, data: product });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const listProductCategories: RequestHandler = async (_req, res, next) => {
+  try {
+    const categories = await productService.listCategories();
+    res.json({ success: true, data: categories });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const listProductReviews: RequestHandler = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (!id) return next(new HttpError(404, 'We could not find that product.'));
+
+    const reviews = await productService.getReviews(id);
+    res.json({ success: true, data: reviews });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createProductReview: RequestHandler = async (req, res, next) => {
+  try {
+    if (!req.user?.id) {
+      return next(new HttpError(401, 'Please log in to continue.'));
+    }
+
+    const id = req.params.id;
+    if (!id) return next(new HttpError(404, 'We could not find that product.'));
+
+    const parsed = createReviewSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return next(new HttpError(400, parsed.error.errors[0]?.message ?? 'Please check your review and try again.'));
+    }
+
+    const review = await productService.createReview(id, req.user.id, parsed.data);
+    res.status(201).json({ success: true, data: review });
   } catch (error) {
     next(error);
   }

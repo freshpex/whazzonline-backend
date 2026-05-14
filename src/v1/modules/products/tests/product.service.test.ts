@@ -24,13 +24,24 @@ const sampleProducts = [
 ];
 
 describe('productService', () => {
-  it('lists products with query and category filters', async () => {
-    const listSpy = vi.spyOn(productRepository, 'listProducts').mockResolvedValue(sampleProducts);
+  it('lists products with query, category, and pagination filters', async () => {
+    const listSpy = vi.spyOn(productRepository, 'listProducts').mockResolvedValue({
+      items: sampleProducts,
+      page: 1,
+      limit: 9,
+      total: 2,
+      totalPages: 1
+    });
 
-    const results = await productService.list('watch', 'Electronics');
+    const results = await productService.list({ q: 'watch', category: 'Electronics', page: 1, limit: 9 });
 
-    expect(listSpy).toHaveBeenCalledWith('watch', 'Electronics');
-    expect(results).toEqual(sampleProducts);
+    expect(listSpy).toHaveBeenCalledWith({
+      query: 'watch',
+      category: 'Electronics',
+      page: 1,
+      limit: 9
+    });
+    expect(results.items).toEqual(sampleProducts);
   });
 
   it('finds a product by id', async () => {
